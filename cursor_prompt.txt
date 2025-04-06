@@ -1,0 +1,14 @@
+please, create Spring CLI application, that will take a path as an argument and then will recursively visit all files in that path doing following actions:
+- print file contents to console, with template file, taken from "resources/template.txt".
+template example:
+<#file_name>
+#file_content
+</#file_name>
+possible placeholders: #file_name, #file_content, #file_path, #file_size, #file_extension, #file_creation_date, #file_modification_date
+
+following parameters are configurable in the program (let's make it with application.yaml):
+files to exclude (with wildcards like "." and "*")
+
+Use existing codebase as a starting point, you can upgrade gradle and springboot if necessary. Use existing packages and classnames
+
+2: please, add well-known binary file extensions to exclude patterns (e.g., jar, exe). focus on files, that could be found in java projects (not more, that 10 extensions, could be less). also, add to ignored patterns folders IDE-specific, like .idea

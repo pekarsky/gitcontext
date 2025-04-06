@@ -1,0 +1,11 @@
+<#file_name>
+File: #file_name
+Path: #file_path
+Size: #file_size bytes
+Extension: #file_extension
+Created: #file_creation_date
+Modified: #file_modification_date
+
+Content:
+#file_content
+</#file_name> 

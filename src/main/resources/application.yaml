@@ -1,0 +1,19 @@
+file-processor:
+  exclude-patterns:
+    # Hidden files and directories
+    - ".*"
+    - "**/.idea"
+    - "**/.gradle"
+    - "**/build"
+    # Binary files
+    - "*.jar"
+    - "*.bin"
+    - "*.class"
+    - "*.war"
+    - "*.ear"
+    # Build and IDE files
+    - "*.iml"
+    - "*.log"
+    - "*.tmp"
+    - "*.bak"
+    - "*.lock"
