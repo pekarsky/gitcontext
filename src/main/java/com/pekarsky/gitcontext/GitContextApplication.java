@@ -48,7 +48,13 @@ public class GitContextApplication implements CommandLineRunner {
         }
 
         String template = loadTemplate();
-        processFiles(startPath, template);
+        Path outputFile = Paths.get(fileProcessorConfig.getOutput().getFile());
+        
+        // Create or clear the output file
+        Files.write(outputFile, new byte[0], StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+        
+        processFiles(startPath, template, outputFile);
+        System.out.println("Context has been saved to: " + outputFile.toAbsolutePath());
     }
 
     private String loadTemplate() throws IOException {
@@ -56,12 +62,12 @@ public class GitContextApplication implements CommandLineRunner {
         return new String(resource.getInputStream().readAllBytes());
     }
 
-    private void processFiles(Path startPath, String template) throws IOException {
+    private void processFiles(Path startPath, String template, Path outputFile) throws IOException {
         Files.walkFileTree(startPath, new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                 if (shouldProcessFile(file)) {
-                    processFile(file, template);
+                    processFile(file, template, outputFile);
                 }
                 return FileVisitResult.CONTINUE;
             }
@@ -122,7 +128,7 @@ public class GitContextApplication implements CommandLineRunner {
                 .replace("?", ".") + "$";
     }
 
-    private void processFile(Path file, String template) throws IOException {
+    private void processFile(Path file, String template, Path outputFile) throws IOException {
         String content = new String(Files.readAllBytes(file));
         String fileName = file.getFileName().toString();
         String filePath = file.toString();
@@ -142,7 +148,8 @@ public class GitContextApplication implements CommandLineRunner {
                 .replace("#file_modification_date", modificationDate)
                 .replace("#file_content", content);
 
-        System.out.println(result);
+        // Append the result to the output file
+        Files.write(outputFile, (result + "\n").getBytes(), StandardOpenOption.APPEND);
     }
 
     private String formatDate(Instant instant) {

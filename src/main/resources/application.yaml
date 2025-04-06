@@ -5,6 +5,7 @@ file-processor:
     - "**/.idea"
     - "**/.gradle"
     - "**/build"
+    - "build"
     # Binary files
     - "*.jar"
     - "*.bin"
@@ -17,3 +18,7 @@ file-processor:
     - "*.tmp"
     - "*.bak"
     - "*.lock"
+    # Output files
+    - "*.context"
+  output:
+    file: gitcontext.context
