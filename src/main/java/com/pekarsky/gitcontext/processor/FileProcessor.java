@@ -9,7 +9,6 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * A file processor that walks through a directory tree and processes files according to
@@ -44,11 +43,14 @@ public class FileProcessor {
             throw new IllegalArgumentException("Directory does not exist: " + directory);
         }
 
-        Files.walkFileTree(directory, new SimpleFileVisitor<Path>() {
+        Files.walkFileTree(directory, new SimpleFileVisitor<>() {
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                if (shouldProcessFile(file)) {
-                    processFile(file);
+                String relativePath = file.toAbsolutePath().toString()
+                        .replaceFirst(directory.toAbsolutePath().toString(), "")
+                        .replaceFirst("/","");
+                if (shouldProcessFile(file, relativePath)) {
+                    processFile(file, relativePath);
                 }
                 return FileVisitResult.CONTINUE;
             }
@@ -69,31 +71,15 @@ public class FileProcessor {
      * @param file The file to check
      * @return true if the file should be processed, false otherwise
      */
-    private boolean shouldProcessFile(Path file) {
+    private boolean shouldProcessFile(Path file, String relativePath) {
         try {
-            String relativePath = file.toAbsolutePath().normalize().toString();
-            
-            // Check if any parent directory should be excluded
-            Path current = file.toAbsolutePath().normalize();
-            while (current != null) {
-                String pathToCheck = current.toString();
-                if (excludePatterns.stream()
-                        .map(this::convertWildcardToRegex)
-                        .anyMatch(regex -> pathToCheck.matches(regex))) {
-                    return false;
-                }
-                current = current.getParent();
-            }
-
-            // Check if the file is binary
-            if (isBinaryFile(file)) {
+            if (excludePatterns.stream()
+                    .anyMatch(relativePath::matches)) {
                 return false;
             }
 
-            // Check the file itself
-            return excludePatterns.stream()
-                    .map(this::convertWildcardToRegex)
-                    .noneMatch(regex -> relativePath.matches(regex));
+            // Check if the file is binary
+            return !isBinaryFile(file);
         } catch (IOException e) {
             System.err.println("Error processing file " + file + ": " + e.getMessage());
             return false;
@@ -118,25 +104,12 @@ public class FileProcessor {
     }
 
     /**
-     * Converts a wildcard pattern to a regular expression.
-     *
-     * @param wildcard The wildcard pattern to convert
-     * @return The equivalent regular expression
-     */
-    private String convertWildcardToRegex(String wildcard) {
-        return "^" + wildcard.replace(".", "\\.")
-                .replace("**", ".*")
-                .replace("*", "[^/]*")
-                .replace("?", ".") + "$";
-    }
-
-    /**
      * Processes a single file using the template.
      *
      * @param file The file to process
      * @throws IOException If an I/O error occurs
      */
-    private void processFile(Path file) throws IOException {
+    private void processFile(Path file, String relativePath) throws IOException {
         String content = new String(Files.readAllBytes(file));
         String fileName = file.getFileName().toString();
         String filePath = file.toString();
@@ -150,6 +123,7 @@ public class FileProcessor {
         String result = template
                 .replace("#file_name", fileName)
                 .replace("#file_path", filePath)
+                .replace("#file_relative_path", relativePath)
                 .replace("#file_size", String.valueOf(fileSize))
                 .replace("#file_extension", fileExtension != null ? fileExtension : "")
                 .replace("#file_creation_date", creationDate)

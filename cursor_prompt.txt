@@ -21,3 +21,5 @@ Use existing codebase as a starting point, you can upgrade gradle and springboot
 - set API to use it in another project. template and exclude configuration can be passed when creating new instance of FileProcessor
 - output should be returned to caller function, no need to print it or save
 - current Main class should be an example, how to use this library
+
+4. please, add #relative_path replacement - this should be replaced by file path, relative from scanned folder path, ex: if we are scanning files from /home/serge/project and scanned file path is /home/serge/project/src/ua/a.java, #relative_path will be src/ua/a.java

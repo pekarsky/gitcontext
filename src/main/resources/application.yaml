@@ -1,27 +1,35 @@
+spring.application.name: gitcontext
 file-processor:
   template: |
-    File: #file_name
-    Path: #file_path
-    Size: #file_size bytes
-    Extension: #file_extension
-    Created: #file_creation_date
-    Modified: #file_modification_date
-    Content:
+    <#file_relative_path>
     #file_content
+    </#file_relative_path>
+    
     ---
+#  template: |
+#    File: #file_name
+#    Path: #file_path
+#    Size: #file_size bytes
+#    Extension: #file_extension
+#    Created: #file_creation_date
+#    Modified: #file_modification_date
+#    Content:
+#    #file_content
+#    ---
   exclude-patterns:
-    - "**/.git"
-    - "**/.gradle"
-    - "**/.idea"
-    - "**/build"
-    - "**/target"
-    - "**/node_modules"
-    - "**/*.jar"
-    - "**/*.class"
-    - "**/*.exe"
-    - "**/*.dll"
-    - "**/*.so"
-    - "**/*.dylib"
-    - "**/*.context"
+    - "^.git/.*$"
+    - "^.gradle/.*$"
+    - "^.idea/.*$"
+    - "^.vscode/.*$"
+    - "^build/.*$"
+    - "^target/.*$"
+    - "^node_modules/.*$"
+    - .*\.jar$
+    - .*\.class$
+    - .*\.exe$
+    - .*\.dll$
+    - .*\.so$
+    - .*\.dylib$
+    - .*\.context$
   output:
     path: "gitcontext.context"
