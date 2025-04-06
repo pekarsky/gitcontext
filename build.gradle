@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.2.3'
 	id 'io.spring.dependency-management' version '1.1.4'
+	id 'maven-publish'
 }
 
 group = 'com.pekarsky'
@@ -9,6 +10,8 @@ version = '0.0.1-SNAPSHOT'
 
 java {
 	sourceCompatibility = '17'
+	withJavadocJar()
+	withSourcesJar()
 }
 
 repositories {
@@ -17,8 +20,48 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
+	implementation 'org.springframework:spring-core:6.1.5'
+	implementation 'org.springframework:spring-context:6.1.5'
+	implementation 'org.yaml:snakeyaml:2.2'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+}
+
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			from components.java
+			artifactId = 'gitcontext'
+			versionMapping {
+				usage('java-api') {
+					fromResolutionOf('runtimeClasspath')
+				}
+				usage('java-runtime') {
+					fromResolutionResult()
+				}
+			}
+			pom {
+				name = 'GitContext'
+				description = 'A library for processing Git repository files'
+				url = 'https://github.com/pekarsky/gitcontext'
+				licenses {
+					license {
+						name = 'The Apache License, Version 2.0'
+						url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+					}
+				}
+				developers {
+					developer {
+						id = 'pekarsky'
+						name = 'Serge Pekarsky'
+						email = 'serge.pekarsky@gmail.com'
+					}
+				}
+			}
+		}
+	}
+	repositories {
+		mavenLocal()
+	}
 }
 
 tasks.named('test') {

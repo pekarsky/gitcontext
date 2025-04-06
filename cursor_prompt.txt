@@ -12,3 +12,12 @@ files to exclude (with wildcards like "." and "*")
 Use existing codebase as a starting point, you can upgrade gradle and springboot if necessary. Use existing packages and classnames
 
 2: please, add well-known binary file extensions to exclude patterns (e.g., jar, exe). focus on files, that could be found in java projects (not more, that 10 extensions, could be less). also, add to ignored patterns folders IDE-specific, like .idea
+
+
+3: ok, application, you are working on, initially was planned to be made as a maven dependency, that could be used outside of this project. so, please ,reorganize it:
+- move logic out of main class and put it into separate classes (e.g., FileProcessor)
+- make it possible to use from other projects as a maven library
+- use publishToMavenLocal (i don't remember exact gradle plugin) to publish it locally
+- set API to use it in another project. template and exclude configuration can be passed when creating new instance of FileProcessor
+- output should be returned to caller function, no need to print it or save
+- current Main class should be an example, how to use this library

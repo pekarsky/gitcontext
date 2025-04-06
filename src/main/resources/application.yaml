@@ -1,24 +1,27 @@
 file-processor:
+  template: |
+    File: #file_name
+    Path: #file_path
+    Size: #file_size bytes
+    Extension: #file_extension
+    Created: #file_creation_date
+    Modified: #file_modification_date
+    Content:
+    #file_content
+    ---
   exclude-patterns:
-    # Hidden files and directories
-    - ".*"
-    - "**/.idea"
+    - "**/.git"
     - "**/.gradle"
+    - "**/.idea"
     - "**/build"
-    - "build"
-    # Binary files
-    - "*.jar"
-    - "*.bin"
-    - "*.class"
-    - "*.war"
-    - "*.ear"
-    # Build and IDE files
-    - "*.iml"
-    - "*.log"
-    - "*.tmp"
-    - "*.bak"
-    - "*.lock"
-    # Output files
-    - "*.context"
+    - "**/target"
+    - "**/node_modules"
+    - "**/*.jar"
+    - "**/*.class"
+    - "**/*.exe"
+    - "**/*.dll"
+    - "**/*.so"
+    - "**/*.dylib"
+    - "**/*.context"
   output:
-    file: gitcontext.context
+    path: "gitcontext.context"
